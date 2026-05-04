@@ -1,0 +1,906 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600&family=Amiri:wght@400;700&display=swap');
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  .app {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    color: var(--color-text-primary);
+    padding: 1.5rem 1rem 3rem;
+    max-width: 640px;
+    margin: 0 auto;
+  }
+
+  .header {
+    text-align: center;
+    margin-bottom: 2rem;
+    padding: 1.5rem;
+    background: var(--color-background-secondary);
+    border-radius: var(--border-radius-lg);
+    border: 0.5px solid var(--color-border-tertiary);
+  }
+
+  .arabic-title {
+    font-family: 'Amiri', serif;
+    font-size: 22px;
+    color: #0F6E56;
+    line-height: 1.5;
+    margin-bottom: 6px;
+  }
+
+  .main-title {
+    font-size: 18px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .subtitle {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+  }
+
+  .step-indicator {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    margin-bottom: 1.5rem;
+    align-items: center;
+  }
+
+  .step-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--color-border-secondary);
+    transition: all 0.3s;
+  }
+
+  .step-dot.active {
+    background: #0F6E56;
+    width: 24px;
+    border-radius: 4px;
+  }
+
+  .step-dot.done {
+    background: #5DCAA5;
+  }
+
+  .card {
+    background: var(--color-background-primary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+  }
+
+  .card-label {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #0F6E56;
+    margin-bottom: 0.75rem;
+  }
+
+  .field-label {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 8px;
+    color: var(--color-text-primary);
+  }
+
+  .field-hint {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    margin-bottom: 8px;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    padding: 10px 14px;
+    border: 0.5px solid var(--color-border-secondary);
+    border-radius: var(--border-radius-md);
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 15px;
+    background: var(--color-background-primary);
+    color: var(--color-text-primary);
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  input[type="text"]:focus {
+    border-color: #1D9E75;
+    box-shadow: 0 0 0 3px rgba(29,158,117,0.1);
+  }
+
+  input[type="text"].error {
+    border-color: #E24B4A;
+  }
+
+  .error-msg {
+    font-size: 12px;
+    color: #A32D2D;
+    margin-top: 4px;
+    display: none;
+  }
+
+  .radio-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .radio-option {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 14px;
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-md);
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--color-background-primary);
+  }
+
+  .radio-option:hover {
+    border-color: #5DCAA5;
+    background: #E1F5EE;
+  }
+
+  .radio-option.selected {
+    border-color: #1D9E75;
+    background: #E1F5EE;
+  }
+
+  .radio-option input[type="radio"] {
+    accent-color: #1D9E75;
+    width: 16px;
+    height: 16px;
+    flex-shrink: 0;
+  }
+
+  .radio-label {
+    font-size: 14px;
+    font-weight: 500;
+  }
+
+  .radio-sub {
+    font-size: 12px;
+    color: var(--color-text-secondary);
+    margin-left: auto;
+  }
+
+  .days-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 8px;
+  }
+
+  .day-card {
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-md);
+    padding: 10px 6px;
+    text-align: center;
+    cursor: pointer;
+    transition: all 0.2s;
+    background: var(--color-background-primary);
+    position: relative;
+  }
+
+  .day-card.available:hover {
+    border-color: #5DCAA5;
+    background: #E1F5EE;
+  }
+
+  .day-card.selected {
+    border: 2px solid #1D9E75;
+    background: #E1F5EE;
+  }
+
+  .day-card.locked {
+    opacity: 0.4;
+    cursor: not-allowed;
+    background: var(--color-background-secondary);
+  }
+
+  .day-card.full {
+    background: #F1EFE8;
+    cursor: not-allowed;
+  }
+
+  .day-name {
+    font-size: 11px;
+    font-weight: 600;
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    margin-bottom: 4px;
+  }
+
+  .day-short {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .day-spots {
+    font-size: 10px;
+    color: var(--color-text-secondary);
+  }
+
+  .day-card.full .day-spots {
+    color: #A32D2D;
+  }
+
+  .day-card.selected .day-name,
+  .day-card.selected .day-short {
+    color: #0F6E56;
+  }
+
+  .lock-icon {
+    font-size: 12px;
+    margin-bottom: 2px;
+  }
+
+  .time-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 14px;
+    background: #E1F5EE;
+    border: 0.5px solid #5DCAA5;
+    border-radius: var(--border-radius-md);
+    font-size: 14px;
+    font-weight: 600;
+    color: #0F6E56;
+    margin-top: 8px;
+  }
+
+  .session-info {
+    font-size: 13px;
+    color: var(--color-text-secondary);
+    margin-top: 8px;
+    line-height: 1.6;
+  }
+
+  .btn-row {
+    display: flex;
+    gap: 10px;
+    margin-top: 1.5rem;
+  }
+
+  .btn-back {
+    padding: 11px 20px;
+    border: 0.5px solid var(--color-border-secondary);
+    border-radius: var(--border-radius-md);
+    background: transparent;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--color-text-secondary);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-back:hover {
+    background: var(--color-background-secondary);
+  }
+
+  .btn-next {
+    flex: 1;
+    padding: 11px 20px;
+    border: none;
+    border-radius: var(--border-radius-md);
+    background: #1D9E75;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-next:hover {
+    background: #0F6E56;
+  }
+
+  .btn-next:active {
+    transform: scale(0.98);
+  }
+
+  .btn-next:disabled {
+    background: var(--color-border-secondary);
+    cursor: not-allowed;
+  }
+
+  .summary-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 0;
+    border-bottom: 0.5px solid var(--color-border-tertiary);
+    font-size: 14px;
+  }
+
+  .summary-row:last-child { border-bottom: none; }
+
+  .summary-key {
+    color: var(--color-text-secondary);
+    font-size: 13px;
+  }
+
+  .summary-val {
+    font-weight: 500;
+    text-align: right;
+    max-width: 55%;
+  }
+
+  .success-screen {
+    text-align: center;
+    padding: 2rem 1rem;
+  }
+
+  .success-icon {
+    width: 64px;
+    height: 64px;
+    background: #E1F5EE;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 1rem;
+  }
+
+  .success-icon svg {
+    width: 32px;
+    height: 32px;
+    stroke: #0F6E56;
+    fill: none;
+    stroke-width: 2.5;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .success-title {
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 6px;
+  }
+
+  .success-sub {
+    font-size: 14px;
+    color: var(--color-text-secondary);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+
+  .reg-card {
+    background: var(--color-background-secondary);
+    border: 0.5px solid var(--color-border-tertiary);
+    border-radius: var(--border-radius-lg);
+    padding: 1.25rem;
+    margin-bottom: 1rem;
+    text-align: left;
+  }
+
+  .reg-no {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    color: #1D9E75;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .btn-restart {
+    padding: 11px 28px;
+    border: 0.5px solid #1D9E75;
+    border-radius: var(--border-radius-md);
+    background: transparent;
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 14px;
+    font-weight: 500;
+    color: #1D9E75;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .btn-restart:hover {
+    background: #E1F5EE;
+  }
+
+  .pill {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+  }
+
+  .pill-full {
+    background: #FAECE7;
+    color: #993C1D;
+  }
+
+  .pill-open {
+    background: #E1F5EE;
+    color: #0F6E56;
+  }
+
+  .pill-locked {
+    background: #F1EFE8;
+    color: #5F5E5A;
+  }
+
+  .legend {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+  }
+
+  /* Loading overlay */
+  .loading-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(255,255,255,0.75);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+    gap: 12px;
+  }
+
+  .loading-overlay.hidden { display: none; }
+
+  .spinner {
+    width: 36px;
+    height: 36px;
+    border: 3px solid #E1F5EE;
+    border-top-color: #1D9E75;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .loading-text {
+    font-size: 13px;
+    color: #0F6E56;
+    font-weight: 500;
+  }
+
+  .api-error-banner {
+    background: #FAECE7;
+    border: 0.5px solid #E24B4A;
+    border-radius: var(--border-radius-md);
+    padding: 10px 14px;
+    font-size: 13px;
+    color: #A32D2D;
+    margin-bottom: 1rem;
+    display: none;
+  }
+</style>
+
+<!-- Loading overlay -->
+<div class="loading-overlay hidden" id="loadingOverlay">
+  <div class="spinner"></div>
+  <div class="loading-text" id="loadingText">Memuatkan...</div>
+</div>
+
+<div class="app">
+  <div class="header">
+    <div class="arabic-title">بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ</div>
+    <div class="main-title">Pendaftaran Kelas Al-Quran</div>
+    <div class="subtitle">Isi borang di bawah untuk mendaftar kelas mengaji</div>
+  </div>
+
+  <div class="step-indicator" id="stepIndicator"></div>
+  <div class="api-error-banner" id="apiErrorBanner"></div>
+  <div id="appContent"></div>
+</div>
+
+<script>
+// ============================================================
+//  CONFIG — paste your deployed Apps Script URL here
+// ============================================================
+const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbzxPaZRR4tzKKSDUK9lXPq9HLcunwDWzL2Yi_5U9CTmtHkqwFwu_dHUnW5XH74-2Z_OQQ/exec';
+
+const DAYS      = ['Isnin','Selasa','Rabu','Khamis','Jumaat'];
+const DAY_SHORT = ['Isnin','Selasa','Rabu','Khamis','Jumaat'];
+const MAX_PER_DAY = 16;
+
+// Participant counts — loaded from the backend
+let participants = [0, 0, 0, 0, 0];
+
+let state = {
+  step: 1,
+  nama: '',
+  umur: '',
+  quran: '',
+  hari: null,
+  regNo: ''
+};
+
+// ============================================================
+//  API helpers
+// ============================================================
+function showLoading(msg) {
+  document.getElementById('loadingText').textContent = msg || 'Memuatkan...';
+  document.getElementById('loadingOverlay').classList.remove('hidden');
+}
+
+function hideLoading() {
+  document.getElementById('loadingOverlay').classList.add('hidden');
+}
+
+function showApiError(msg) {
+  const banner = document.getElementById('apiErrorBanner');
+  banner.textContent = msg;
+  banner.style.display = 'block';
+}
+
+function clearApiError() {
+  const banner = document.getElementById('apiErrorBanner');
+  banner.style.display = 'none';
+  banner.textContent = '';
+}
+
+async function fetchCounts() {
+  showLoading('Menyemak ketersediaan...');
+  try {
+    const res  = await fetch(`${APPS_SCRIPT_URL}?action=getCounts`);
+    const data = await res.json();
+    if (data.ok) {
+      DAYS.forEach((day, i) => {
+        participants[i] = data.counts[day] || 0;
+      });
+      clearApiError();
+    } else {
+      showApiError('Gagal mendapatkan maklumat slot. Sila muat semula halaman.');
+    }
+  } catch (e) {
+    showApiError('Tidak dapat menyambung ke pelayan. Sila semak sambungan internet anda.');
+  } finally {
+    hideLoading();
+  }
+}
+
+async function submitRegistration() {
+  showLoading('Menghantar pendaftaran...');
+  clearApiError();
+  try {
+    const res = await fetch(APPS_SCRIPT_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'text/plain' }, // Apps Script requires this
+      body: JSON.stringify({
+        action: 'register',
+        nama:   state.nama,
+        umur:   state.umur,
+        quran:  state.quran,
+        hari:   state.hari
+      })
+    });
+    const data = await res.json();
+    if (data.ok) {
+      state.regNo = data.regNo;
+      participants[state.hari]++;
+      state.step = 5;
+      render();
+    } else {
+      showApiError(data.error || 'Pendaftaran gagal. Sila cuba semula.');
+    }
+  } catch (e) {
+    showApiError('Ralat rangkaian. Sila cuba semula.');
+  } finally {
+    hideLoading();
+  }
+}
+
+// ============================================================
+//  Day availability logic
+// ============================================================
+function getAvailableDays() {
+  let firstAvailableIdx = -1;
+  for (let i = 0; i < 5; i++) {
+    if (participants[i] < MAX_PER_DAY) {
+      firstAvailableIdx = i;
+      break;
+    }
+  }
+  return participants.map((count, i) => {
+    if (count >= MAX_PER_DAY) return 'full';
+    if (i === firstAvailableIdx) return 'available';
+    return 'locked';
+  });
+}
+
+// ============================================================
+//  Render engine
+// ============================================================
+function renderSteps() {
+  const total = 4;
+  let html = '';
+  for (let i = 1; i <= total; i++) {
+    if (i < state.step) html += `<div class="step-dot done"></div>`;
+    else if (i === state.step) html += `<div class="step-dot active"></div>`;
+    else html += `<div class="step-dot"></div>`;
+  }
+  document.getElementById('stepIndicator').innerHTML = html;
+}
+
+function render() {
+  renderSteps();
+  const el = document.getElementById('appContent');
+  if (state.step === 1)      el.innerHTML = step1();
+  else if (state.step === 2) el.innerHTML = step2();
+  else if (state.step === 3) el.innerHTML = step3();
+  else if (state.step === 4) el.innerHTML = step4();
+  else                       el.innerHTML = stepSuccess();
+  bindEvents();
+}
+
+// ============================================================
+//  Step templates
+// ============================================================
+function step1() {
+  return `
+    <div class="card">
+      <div class="card-label">Langkah 1 daripada 4 — Maklumat Diri</div>
+      <div class="field-label">Nama Penuh</div>
+      <div class="field-hint">Masukkan nama penuh seperti dalam kad pengenalan</div>
+      <input type="text" id="namaInput" placeholder="Contoh: Ahmad bin Abdullah" value="${state.nama}">
+      <div class="error-msg" id="namaError">Sila masukkan nama penuh anda.</div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-next" onclick="validateStep1()">Seterusnya →</button>
+    </div>
+  `;
+}
+
+function step2() {
+  const ages = [
+    { val: '7-12',  label: '7 – 12 tahun',       sub: 'Kanak-kanak' },
+    { val: '13-17', label: '13 – 17 tahun',       sub: 'Remaja'      },
+    { val: '18+',   label: '18 tahun ke atas',    sub: 'Dewasa'      },
+  ];
+  return `
+    <div class="card">
+      <div class="card-label">Langkah 2 daripada 4 — Lingkungan Umur</div>
+      <div class="field-label">Pilih lingkungan umur anda</div>
+      <div class="radio-group" id="umurGroup">
+        ${ages.map(a => `
+          <label class="radio-option ${state.umur === a.val ? 'selected' : ''}" onclick="selectUmur('${a.val}', this)">
+            <input type="radio" name="umur" value="${a.val}" ${state.umur === a.val ? 'checked' : ''}>
+            <span class="radio-label">${a.label}</span>
+            <span class="radio-sub">${a.sub}</span>
+          </label>
+        `).join('')}
+      </div>
+      <div class="error-msg" id="umurError">Sila pilih lingkungan umur anda.</div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-back" onclick="goBack()">← Kembali</button>
+      <button class="btn-next" onclick="validateStep2()">Seterusnya →</button>
+    </div>
+  `;
+}
+
+function step3() {
+  const opts = [
+    { val: 'ya',    label: 'Ya, pernah belajar',   sub: 'Ada pengalaman sebelum ini' },
+    { val: 'tidak', label: 'Tidak, belum pernah',  sub: 'Bermula dari awal'           },
+  ];
+  return `
+    <div class="card">
+      <div class="card-label">Langkah 3 daripada 4 — Pengalaman Mengaji</div>
+      <div class="field-label">Adakah anda pernah belajar mengaji Al-Quran?</div>
+      <div class="radio-group" id="quranGroup">
+        ${opts.map(o => `
+          <label class="radio-option ${state.quran === o.val ? 'selected' : ''}" onclick="selectQuran('${o.val}', this)">
+            <input type="radio" name="quran" value="${o.val}" ${state.quran === o.val ? 'checked' : ''}>
+            <span class="radio-label">${o.label}</span>
+            <span class="radio-sub">${o.sub}</span>
+          </label>
+        `).join('')}
+      </div>
+      <div class="error-msg" id="quranError">Sila buat pilihan.</div>
+    </div>
+    <div class="btn-row">
+      <button class="btn-back" onclick="goBack()">← Kembali</button>
+      <button class="btn-next" onclick="validateStep3()">Seterusnya →</button>
+    </div>
+  `;
+}
+
+function step4() {
+  const dayStatus = getAvailableDays();
+  return `
+    <div class="card">
+      <div class="card-label">Langkah 4 daripada 4 — Pilih Hari Kelas</div>
+      <div class="field-label">Pilih hari yang sesuai</div>
+      <div class="field-hint">Hari seterusnya hanya dibuka apabila hari semasa telah penuh (${MAX_PER_DAY} peserta).</div>
+      <div class="days-grid">
+        ${DAYS.map((day, i) => {
+          const status = dayStatus[i];
+          const spots  = MAX_PER_DAY - participants[i];
+          const isSelected = state.hari === i;
+          if (status === 'full') {
+            return `<div class="day-card full">
+              <div class="day-name">${DAY_SHORT[i]}</div>
+              <div class="day-short">${day.slice(0,3)}</div>
+              <div class="day-spots">Penuh</div>
+            </div>`;
+          } else if (status === 'locked') {
+            return `<div class="day-card locked">
+              <div class="day-name">${DAY_SHORT[i]}</div>
+              <div class="lock-icon">🔒</div>
+              <div class="day-short">${day.slice(0,3)}</div>
+              <div class="day-spots">Terkunci</div>
+            </div>`;
+          } else {
+            return `<div class="day-card available ${isSelected ? 'selected' : ''}" onclick="selectHari(${i})">
+              <div class="day-name">${DAY_SHORT[i]}</div>
+              <div class="day-short">${day.slice(0,3)}</div>
+              <div class="day-spots">${spots} tempat</div>
+            </div>`;
+          }
+        }).join('')}
+      </div>
+      <div class="legend">
+        <span class="pill pill-open">Tersedia</span>
+        <span class="pill pill-full">Penuh</span>
+        <span class="pill pill-locked">Terkunci</span>
+      </div>
+      <div class="error-msg" id="hariError">Sila pilih hari kelas.</div>
+    </div>
+    ${state.hari !== null ? `
+    <div class="card">
+      <div class="card-label">Masa Kelas</div>
+      <div class="time-badge">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        8:30 malam – 10:00 malam
+      </div>
+      <div class="session-info">Hari: <strong>${DAYS[state.hari]}</strong><br>Tempoh: 1 jam 30 minit</div>
+    </div>
+    ` : ''}
+    <div class="btn-row">
+      <button class="btn-back" onclick="goBack()">← Kembali</button>
+      <button class="btn-next" onclick="validateStep4()">Semak & Hantar →</button>
+    </div>
+  `;
+}
+
+function stepSuccess() {
+  const umurLabel = {
+    '7-12':  '7 – 12 tahun',
+    '13-17': '13 – 17 tahun',
+    '18+':   '18 tahun ke atas'
+  }[state.umur];
+
+  return `
+    <div class="success-screen">
+      <div class="success-icon">
+        <svg viewBox="0 0 24 24"><polyline points="20 6 9 17 4 12"/></svg>
+      </div>
+      <div class="success-title">Pendaftaran Berjaya!</div>
+      <div class="success-sub">Tahniah! Pendaftaran anda telah diterima.<br>Kami akan menghubungi anda tidak lama lagi.</div>
+
+      <div class="reg-card">
+        <div class="reg-no">No. Pendaftaran: ${state.regNo}</div>
+        <div class="summary-row">
+          <span class="summary-key">Nama Penuh</span>
+          <span class="summary-val">${state.nama}</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-key">Lingkungan Umur</span>
+          <span class="summary-val">${umurLabel}</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-key">Pengalaman Mengaji</span>
+          <span class="summary-val">${state.quran === 'ya' ? 'Pernah belajar' : 'Belum pernah'}</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-key">Hari Kelas</span>
+          <span class="summary-val">${DAYS[state.hari]}</span>
+        </div>
+        <div class="summary-row">
+          <span class="summary-key">Masa</span>
+          <span class="summary-val">8:30 – 10:00 malam</span>
+        </div>
+      </div>
+
+      <button class="btn-restart" onclick="restart()">Daftar Peserta Lain</button>
+    </div>
+  `;
+}
+
+// ============================================================
+//  Event handlers
+// ============================================================
+function bindEvents() {}
+
+function selectUmur(val, el) {
+  state.umur = val;
+  document.querySelectorAll('#umurGroup .radio-option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function selectQuran(val, el) {
+  state.quran = val;
+  document.querySelectorAll('#quranGroup .radio-option').forEach(o => o.classList.remove('selected'));
+  el.classList.add('selected');
+}
+
+function selectHari(i) {
+  state.hari = i;
+  render();
+}
+
+function goBack() {
+  clearApiError();
+  state.step--;
+  // Re-fetch counts when returning to step 4 for fresh data
+  if (state.step === 4) {
+    fetchCounts().then(() => render());
+    return;
+  }
+  render();
+}
+
+function restart() {
+  state = { step: 1, nama: '', umur: '', quran: '', hari: null, regNo: '' };
+  fetchCounts().then(() => render());
+}
+
+// ============================================================
+//  Validation
+// ============================================================
+function validateStep1() {
+  const val = document.getElementById('namaInput').value.trim();
+  if (!val) {
+    document.getElementById('namaInput').classList.add('error');
+    document.getElementById('namaError').style.display = 'block';
+    return;
+  }
+  state.nama = val;
+  state.step = 2;
+  render();
+}
+
+function validateStep2() {
+  if (!state.umur) {
+    document.getElementById('umurError').style.display = 'block';
+    return;
+  }
+  state.step = 3;
+  render();
+}
+
+function validateStep3() {
+  if (!state.quran) {
+    document.getElementById('quranError').style.display = 'block';
+    return;
+  }
+  // Fetch fresh counts before showing the day picker
+  fetchCounts().then(() => {
+    state.step = 4;
+    render();
+  });
+}
+
+function validateStep4() {
+  if (state.hari === null) {
+    document.getElementById('hariError').style.display = 'block';
+    return;
+  }
+  submitRegistration();
+}
+
+// ============================================================
+//  Boot — load counts then render
+// ============================================================
+fetchCounts().then(() => render());
+</script>
